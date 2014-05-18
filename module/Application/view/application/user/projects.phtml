@@ -1,0 +1,68 @@
+<ul class="breadcrumb">
+    <li><a href="<?php echo $this->url('application/users') ?>">Users</a></li>
+    <li class="active"><?php echo $this->user ?></li>
+</ul>
+<table class="table">
+    <tr>
+        <th>Project Name</th>
+        <th width="100px">
+            <?php if(count($this->projectsToAdd)): ?>
+                <a data-toggle="modal" href="#myModal" class="btn btn-primary btn-xs">Add Project</a>
+            <?php endif ?>
+        </th>
+    </tr>
+    <?php foreach ($this->projects as $project): ?>
+        <tr>
+            <td>
+                <a href="<?php echo $this->url('application/project_users', array(
+                    'projectName' => $project
+                )) ?>"><?php echo $project ?></a>
+            </td>
+            <td>
+                <a class="btn btn-danger btn-xs" href="<?php echo $this->url('application/remove_user_from_project', array(
+                    'backUrl' => base64_encode($this->serverUrl(true)),
+                    'projectName' => $project,
+                ), null, true) ?>">Remove</a>
+            </td>
+        </tr>
+    <?php endforeach ?>
+</table>
+
+<!-- Modal -->
+<form method="post" action="<?php echo $this->url('application/add_user_to_project', array(
+    'backUrl' => base64_encode($this->serverUrl(true)),
+), null, true) ?>">
+<div class="modal fade" id="myModal" tabindex="-1" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <div class="modal-header">
+                <button type="button" class="close" data-dismiss="modal" aria-hidden="true">&times;</button>
+                <h4 class="modal-title">Add user to project</h4>
+            </div>
+            <div class="modal-body">
+                <div class="row">
+                    <label>Select Project</label>
+                    <select name="projectName" class="availableUser form-control">
+                        <?php if(count($this->projectsToAdd)): ?>
+                        <optgroup label="Available projects">
+                            <?php foreach ($this->projectsToAdd as $project): ?>
+                                <option value="<?php echo $project ?>"><?php echo $project ?></option>
+                            <?php endforeach ?>
+                        </optgroup>
+                        <?php else: ?>
+                        <optgroup label="No projects available"></optgroup>
+                        <?php endif ?>
+                    </select>
+                </div>
+                <input type="hidden" name="userName" value="<?php echo $this->user ?>" >
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-default" data-dismiss="modal">Cancel</button>
+                <button type="submit" class="btn btn-primary">Add Project</button>
+            </div>
+        </div>
+        <!-- /.modal-content -->
+    </div>
+    <!-- /.modal-dialog -->
+</div><!-- /.modal -->
+</form>

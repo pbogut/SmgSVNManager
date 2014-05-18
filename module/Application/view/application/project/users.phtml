@@ -1,0 +1,119 @@
+<ul class="breadcrumb">
+    <li><a href="<?php echo $this->url('application/projects') ?>">Projects</a></li>
+    <li class="active"><?php echo $this->project ?></li>
+</ul>
+<table class="table">
+    <tr>
+        <th>User Name</th>
+        <th width="100px"><a data-toggle="modal" href="#myModal" class="btn btn-primary btn-xs">Add User</a></th>
+    </tr>
+    <?php foreach ($this->users as $user): ?>
+        <tr>
+            <td>
+                <a href="<?php echo $this->url('application/user_projects', array(
+                    'userName' => $user
+                )) ?>"><?php echo $user ?></a>
+            </td>
+            <td>
+                <a class="btn btn-danger btn-xs" href="<?php echo $this->url('application/remove_user_from_project', array(
+                    'backUrl' => base64_encode($this->serverUrl(true)),
+                    'userName' => $user,
+                ), null, true) ?>">Remove</a>
+            </td>
+        </tr>
+    <?php endforeach ?>
+</table>
+
+<!-- Modal -->
+<form method="post" action="<?php echo $this->url('application/add_user_to_project', array(
+    'backUrl' => base64_encode($this->serverUrl(true)),
+), null, true) ?>">
+<div class="modal fade" id="myModal" tabindex="-1" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <div class="modal-header">
+                <button type="button" class="close" data-dismiss="modal" aria-hidden="true">&times;</button>
+                <h4 class="modal-title">Add user to project</h4>
+            </div>
+            <div class="modal-body">
+                <div class="row">
+                    <label>Select user</label>
+                    <select id="userSelect" class="avilabeUser form-control">
+                        <optgroup label="Action">
+                            <option value="">Create new user</option>
+                        </optgroup>
+                        <?php if(count($this->usersToAdd)): ?>
+                            <optgroup label="Available users">
+                                <?php foreach ($this->usersToAdd as $user): ?>
+                                    <option value="<?php echo $user ?>"><?php echo $user ?></option>
+                                <?php endforeach ?>
+                            </optgroup>
+                        <?php else: ?>
+                            <optgroup label="No users available"></optgroup>
+                        <?php endif ?>
+                    </select>
+                </div>
+                <div class="row">
+                    <label class="newUser">User name</label>
+                    <input class="newUser form-control" type="text" name="userName" >
+                </div>
+                <div class="row">
+                    <label class="newUser">Password</label>
+                    <input class="newUser form-control" type="password" name="password" >
+                </div>
+                <div class="row">
+                    <label class="newUser">
+                        <input id="showPassword" class="newUser" type="checkbox" >
+                        Show password
+                    </label>
+                    <a href="" id="generatePassword" class="newUser btn btn-primary pull-right">Generate</a>
+                </div>
+                <input type="hidden" name="projectName" value="<?php echo $this->project ?>" >
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-default" data-dismiss="modal">Cancel</button>
+                <button type="submit" class="btn btn-primary">Add User</button>
+            </div>
+        </div>
+        <!-- /.modal-content -->
+    </div>
+    <!-- /.modal-dialog -->
+</div><!-- /.modal -->
+</form>
+
+<script>
+    function generatePassword(length) {
+        length = length || 8;
+        var charset = "abcdefghijklnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789!@#$%&*",
+            retVal = "";
+        for (var i = 0, n = charset.length; i < length; ++i) {
+            retVal += charset.charAt(Math.floor(Math.random() * n));
+        }
+        return retVal;
+    }
+    $(document).ready(function () {
+        $('#userSelect').bind('change', function () {
+            var value = $(this).val();
+            if (value == '') {
+                $('#userSelect').attr('name', null);
+                $('.newUser').show();
+                $('.newUser').each(function(){
+                    this.disabled = false;
+                });
+            } else {
+                $('#userSelect').attr('name', 'userName');
+                $('.newUser').hide();
+                $('.newUser').each(function(){
+                    this.disabled = true;
+                });
+            }
+        });
+        $('#showPassword').bind('change', function () {
+            $('input[name=password]').attr('type', this.checked ? 'text' : 'password');
+        });
+        $('#generatePassword').bind('click', function () {
+            $('input[name=password]').val(generatePassword());
+            return false;
+        });
+    });
+</script>

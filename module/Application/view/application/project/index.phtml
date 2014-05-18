@@ -1,0 +1,59 @@
+<ul class="breadcrumb">
+    <li class="active">Projects</li>
+</ul>
+<table class="table">
+    <tr>
+        <th>Project Name</th>
+        <th width="100px"><a data-toggle="modal" href="#myModal" class="btn btn-primary btn-xs">Create project</a></th>
+    </tr>
+    <?php foreach ($this->projects as $project): ?>
+        <tr>
+            <td>
+                <a href="<?php echo $this->url('application/project_users', array(
+                    'projectName' => $project
+                )) ?>"><?php echo $project ?></a>
+            </td>
+            <td>
+                <a class="btn btn-primary btn-xs" href="<?php echo $this->url('application/project_users', array(
+                    'projectName' => $project
+                )) ?>">Users</a>
+            </td>
+        </tr>
+    <?php endforeach ?>
+</table>
+
+<form method="post" action="<?php echo $this->url('application/create_project', array(
+    'backUrl' => base64_encode($this->serverUrl(true)),
+), null, true) ?>">
+    <div class="modal fade" id="myModal" tabindex="-1" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true">
+        <div class="modal-dialog">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <button type="button" class="close" data-dismiss="modal" aria-hidden="true">&times;</button>
+                    <h4 class="modal-title">Create New Project</h4>
+                </div>
+                <div class="modal-body">
+                    <div class="row">
+                        <label>Project Name</label>
+                        <input class="form-control" type="text" name="projectName">
+                    </div>
+                    <div class="row">
+                        <label class="newUser">Select Users</label>
+                        <select name ="usersNames[]" class="form-control" multiple>
+                            <?php foreach ($this->users as $user): ?>
+                               <option <?php echo in_array($user,$this->defaultUsers) ? 'selected="selected"' : '' ?> value="<?php echo $user ?>"><?php echo $user ?></option>
+                            <?php endforeach ?>
+                        </select>
+                    </div>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-default" data-dismiss="modal">Cancel</button>
+                    <button type="submit" class="btn btn-primary">Add Project</button>
+                </div>
+            </div>
+            <!-- /.modal-content -->
+        </div>
+        <!-- /.modal-dialog -->
+    </div>
+    <!-- /.modal -->
+</form>
